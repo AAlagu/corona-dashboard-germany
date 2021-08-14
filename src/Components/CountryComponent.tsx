@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import * as api from "../CovidApi";
 import "antd/dist/antd.css";
-import LineChartLayout from "../layouts/LineChartLayout";
+import LineChartLayout from "../Layouts/LineChartLayout";
 import TimeFrameSelection from "./TimeFrameSelection";
 import { useEffect, useState } from "react";
 import { AutoComplete, Col, Input, Result, Row, Space, Spin } from "antd";

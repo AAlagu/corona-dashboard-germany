@@ -1,25 +1,10 @@
-/*.stateTable thead > tr > th {
-  background-color: #8c8c8c;
-  color: #ffffff;
+.table-row-light {
+  background: #ffffff;
+}
+.table-row-dark {
+  background: #fafafa;
 }
 
-.stateTable thead > tr > th:hover {
-  color: black;
-}
-
-.stateTable tr:nth-child(2n) td {
-  background: #f0f0f0;
-}
-.stateTable td {
-  background: #d9d9d9;
-}
-.table-row-light{
-
-}
-.table-row-dark{
-
-}
-*/
 .heatMapLegend span {
   border: 1px solid #ccc;
   float: left;
@@ -40,17 +25,6 @@
   border-color: #d9d9d9;
   color: black;
 }
-/*
-.stateTable tr:hover {
-  font-weight: bold;
-}
-
-.stateTable table-row-light {
-  background-color: #ffffff;
-}
-.stateTable table-row-dark {
-  background-color: #fbfbfb;
-}*/
 
 .ant-btn-primary:hover {
   background: #f0f0f0;
@@ -58,7 +32,7 @@
   color: black;
 }
 
-.ant-btn-primary:focus {
+.four {
   background: #8c8c8c;
   border-color: #8c8c8c;
   color: white;
@@ -71,24 +45,3 @@
   text-align: center;
   border-radius: 4px;
 }
-
-/*.cases {
-  background: #e6f7ff;
-}
-.cases:focus {
-  background: #e6f7ff;
-}
-
-.deaths {
-  background: #fff1f0;
-}
-.deaths:focus {
-  background: #fff1f0;
-}
-
-.recovered {
-  background: #d9f7be;
-}
-.recovered:focus {
-  background: #d9f7be;
-}*/

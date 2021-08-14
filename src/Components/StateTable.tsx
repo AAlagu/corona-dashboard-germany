@@ -7,7 +7,7 @@ import "./styles.css";
 import { Result, Spin } from "antd";
 
 //------------------------------------- interface -------------------------------------
-interface stateColumn {
+interface IStateColumn {
   key: string;
   name: string;
   cases: number;
@@ -46,7 +46,7 @@ const StateTable: React.FC<props> = ({
 }) => {
   const totalDays: number = 28;
 
-  const [stateData, setStateData] = useState<stateColumn[]>([
+  const [stateData, setStateData] = useState<IStateColumn[]>([
     {
       key: "SH",
       name: "Schleswig-Holstein",

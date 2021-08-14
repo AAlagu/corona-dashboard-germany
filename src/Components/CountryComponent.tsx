@@ -1,65 +1,63 @@
 import { useQuery } from "react-query";
 import * as api from "../CovidApi";
 import "antd/dist/antd.css";
-import LineChartLayout from "../Layouts/LineChartLayout";
+import LineChartLayout from "../layouts/LineChartLayout";
 import TimeFrameSelection from "./TimeFrameSelection";
-import { useState } from "react";
-import {
-  AutoComplete,
-  Col,
-  Descriptions,
-  Input,
-  Layout,
-  Menu,
-  Result,
-  Row,
-  Space,
-  Spin,
-} from "antd";
+import { useEffect, useState } from "react";
+import { AutoComplete, Col, Input, Result, Row, Space, Spin } from "antd";
 import StateTable from "./StateTable";
 import StateChart from "./StateChart";
 import "./styles.css";
 import StateSelection from "./StateSelection";
 import HeatmapRange from "./HeatmapRange";
 import StateDetails from "./StateDetails";
-import { AxiosRequestConfig, AxiosResponse } from "axios";
-import { FaReact } from "react-icons/fa";
-import { SiTypescript } from "react-icons/si";
-import { GithubFilled } from "@ant-design/icons";
+import { FaGithub, FaLinkedinIn, FaXing } from "react-icons/fa";
 
 //------------------------------------- style -------------------------------------
 const layout = {
   width: 220,
   height: 250,
-  //cursor: "pointer",
 };
 
-const { Sider, Content, Header, Footer } = Layout;
+const leftCol = {
+  sm: 24,
+  md: 24,
+  xl: 13,
+  xxl: 12,
+};
+
+const rightCol = {
+  xs: 20,
+  sm: 20,
+  md: 24,
+  xl: 10,
+  xxl: 10,
+};
 
 const { Search } = Input;
 
 //--------------------------------- Component ------------------------------------------
 const CountryComponent = () => {
-  // const { state }: { state: string } = useParams();
-  const [collapsed, setCollapsed] = useState<boolean>(true);
   const totalDays: number = 28;
   const [selectedDays, setSelectedDays] = useState<number>(totalDays);
-  const [state, setState] = useState<string>("SH");
+  const [state, setState] = useState<string>("BW");
 
-  const [germanyCasesData, setGermanyCasesData] = useState<any>();
-  const [germanyDeathsData, setGermanyDeathsData] = useState<any>();
-  const [germanyRecoveredData, setGermanyRecoveredData] = useState<any>();
+  const [lineChartCases, setLineChartCases] = useState<any>();
+  const [lineChartDeaths, setLineChartDeaths] = useState<any>();
+  const [lineChartRecovered, setLineChartRecovered] = useState<any>();
 
-  const [stateCasesData, setStateCasesData] = useState<any>();
-  const [stateDeathsData, setStateDeathsData] = useState<any>();
-  const [stateRecoveredData, setStateRecoveredData] = useState<any>();
+  const [stateCases, setStateCases] = useState<any>();
+  const [stateDeaths, setStateDeaths] = useState<any>();
+  const [stateRecovered, setStateRecovered] = useState<any>();
 
   const [chartInterval, setChartInterval] = useState<number>(7);
 
-  const [totalCases, setTotalCases] = useState<number>(0);
+  const [germanyTotalCases, setGermanyTotalCases] = useState<number>(0);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
-  const [options, setOptions] = useState([]);
+  const [autoCompleteOptions, setAutoCompleteOptions] = useState([]);
+  const [toggleCountryToStateLineChart, setToggleCountryToStateLineChart] =
+    useState<boolean>(false);
 
   const {
     isLoading: casesLoading,
@@ -67,13 +65,13 @@ const CountryComponent = () => {
     data: germanyCases,
   } = useQuery("GermanyCases", () => api.getGermanyCases(totalDays), {
     onSuccess: (germanyCases) => {
-      setGermanyCasesData(germanyCases?.data);
+      setLineChartCases(germanyCases?.data);
       let total: number = germanyCases?.data
         .map((a: any) => a.cases)
         .reduce(function (a: number, b: number) {
           return a + b;
         });
-      setTotalCases(total);
+      setGermanyTotalCases(total);
       setLastUpdate(new Date(germanyCases?.meta.lastUpdate));
     },
   });
@@ -84,7 +82,7 @@ const CountryComponent = () => {
     data: germanyDeaths,
   } = useQuery("GermanyDeaths", () => api.getGermanyDeaths(totalDays), {
     onSuccess: (germanyDeaths) => {
-      setGermanyDeathsData(germanyDeaths?.data);
+      setLineChartDeaths(germanyDeaths?.data);
     },
   });
 
@@ -94,13 +92,11 @@ const CountryComponent = () => {
     data: germanyRecovered,
   } = useQuery("GermanyRecovered", () => api.getGermanyRecovered(totalDays), {
     onSuccess: (germanyRecovered) => {
-      setGermanyRecoveredData(germanyRecovered?.data);
+      setLineChartRecovered(germanyRecovered?.data);
     },
   });
 
-  const onTimeChange = (days: number, interval: number) => {
-    setSelectedDays(days);
-    setChartInterval(interval);
+  const timeChangeCalculation = (days: number) => {
     let cases: any = [];
     let deaths: any = [];
     let recovered: any = [];
@@ -109,9 +105,15 @@ const CountryComponent = () => {
       deaths.push(germanyDeaths?.data[i]);
       recovered.push(germanyRecovered?.data[i]);
     }
-    setGermanyCasesData(cases);
-    setGermanyDeathsData(deaths);
-    setGermanyRecoveredData(recovered);
+    setLineChartCases(cases);
+    setLineChartDeaths(deaths);
+    setLineChartRecovered(recovered);
+  };
+
+  const onTimeChange = (days: number, interval: number) => {
+    setSelectedDays(days);
+    setChartInterval(interval);
+    timeChangeCalculation(days);
   };
 
   const onStateSelectionChange = (state: string) => {
@@ -125,15 +127,19 @@ const CountryComponent = () => {
     recovered: any
   ) => {
     setState(state);
-    setStateCasesData(cases);
-    setStateDeathsData(deaths);
-    setStateRecoveredData(recovered);
+    setStateCases(cases);
+    setStateDeaths(deaths);
+    setStateRecovered(recovered);
   };
 
-  /*  useEffect(() => {
-    console.log(selectedDays);
-    console.log(state);
-  }, [selectedDays, state]);*/
+  useEffect(() => {
+    if (toggleCountryToStateLineChart) {
+      setLineChartCases(stateCases);
+      setLineChartDeaths(stateDeaths);
+      setLineChartRecovered(stateRecovered);
+    }
+  }, [stateCases, stateDeaths, stateRecovered]);
+
   const onSearch = (value: string) => {
     {
       let searchState: any = [];
@@ -142,16 +148,24 @@ const CountryComponent = () => {
           searchState.push({ value: item.name, label: item.name });
         }
       });
-      setOptions(value ? searchState : []);
+      setAutoCompleteOptions(value ? searchState : []);
     }
   };
 
-  const onSelect = (value: string) => {
+  const onSearchBarSelect = (value: string) => {
     StateDetails.map((item) => {
       if (value === item.name) {
         setState(item.id);
       }
     });
+    setToggleCountryToStateLineChart(true);
+  };
+
+  const onSearchBarChange = (value: string) => {
+    if (value === "") {
+      setToggleCountryToStateLineChart(false);
+    }
+    timeChangeCalculation(selectedDays);
   };
 
   if (casesError || deathsError || recoveredError) {
@@ -171,204 +185,198 @@ const CountryComponent = () => {
       </div>
     );
   }
-  //md={18} lg={20} xxl={19}
+
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      <Sider style={{ background: "#8c8c8c" }} collapsed={collapsed}></Sider>
-      <Layout>
-        <Content
-          style={{
-            background: "white",
-          }}
-        >
-          <Row>
-            <Col sm={24} md={24} xl={19} xxl={12}>
-              <Row justify="center" style={{ paddingTop: "50px" }}>
-                <label style={{ color: "#8c8c8c", fontSize: "large" }}>
-                  Search your state
-                </label>
-              </Row>
-              <Row justify="center" style={{ paddingTop: "20px" }}>
-                <AutoComplete
-                  options={options}
-                  onSearch={onSearch}
-                  onSelect={onSelect}
-                  style={{
-                    height: 80,
-                  }}
-                >
-                  <Search
-                    className="search"
-                    placeholder="Baden-Württemberg"
-                    allowClear
-                    size="large"
-                    style={{
-                      width: 660,
-                      background: "-webkit-linear-gradient(black, white)",
-                      height: 50,
-                    }}
-                  />
-                </AutoComplete>
-              </Row>
-              <Row justify="center" style={{ paddingTop: "60px" }}>
-                <Col>
-                  <LineChartLayout
-                    LineChartData={germanyCasesData}
-                    DataKey="cases"
-                    StrokeColor="#0088FE"
-                    LegendTitle="Total Cases"
-                    LegendColor="#0088FE"
-                    BackgroundColor="#e6f7ff"
-                  />
-                </Col>
-                <Col>
-                  <LineChartLayout
-                    LineChartData={germanyRecoveredData}
-                    DataKey="recovered"
-                    StrokeColor="green"
-                    LegendTitle="Total Recovered"
-                    LegendColor="green"
-                    BackgroundColor="#d9f7be"
-                  />
-                </Col>
-                <Col>
-                  <LineChartLayout
-                    LineChartData={germanyDeathsData}
-                    DataKey="deaths"
-                    StrokeColor="red"
-                    LegendTitle="Total Deaths"
-                    LegendColor="red"
-                    BackgroundColor="#fff1f0"
-                  />
-                </Col>
-              </Row>
-              <Row justify="space-around" style={{ paddingTop: "120px" }}>
-                <TimeFrameSelection onChange={onTimeChange} />
-              </Row>
-              <Row justify="center" style={{ paddingTop: "40px" }}>
-                <StateTable
-                  selectedDays={selectedDays}
-                  selectionState={state}
-                  onChange={onStateTableChange}
-                />
-              </Row>
-            </Col>
-            <Col sm={25} md={24} xl={21} xxl={10}>
-              <Row
-                justify="center"
+    <Row>
+      <Row>
+        <Col {...leftCol}>
+          <Row justify="center" style={{ paddingTop: "50px" }}>
+            <label style={{ color: "#8c8c8c", fontSize: "large" }}>
+              Search your state
+            </label>
+          </Row>
+          <Row justify="center" style={{ paddingTop: "20px" }}>
+            <AutoComplete
+              options={autoCompleteOptions}
+              onSearch={onSearch}
+              onSelect={onSearchBarSelect}
+              onChange={onSearchBarChange}
+              style={{
+                height: 80,
+              }}
+            >
+              <Search
+                className="search"
+                placeholder="Baden-Württemberg"
+                allowClear
+                size="large"
                 style={{
-                  background: "white",
-
-                  paddingTop: "50px",
+                  width: 450,
+                  background: "-webkit-linear-gradient(black, white)",
+                  height: 50,
                 }}
-              >
-                <Col sm={15} md={19} lg={14} xl={13}>
-                  <div>
-                    <div
-                      style={{
-                        height: "40px",
-                        width: "80px",
-                        background:
-                          "-webkit-linear-gradient(#000000 , #ff0000, #ffff00 )",
-                        color: "white",
-                        textAlign: "center",
-                        verticalAlign: "middle",
-                        lineHeight: "40px",
-                        fontWeight: "bold",
-                        fontSize: "large",
-                        position: "relative",
-                      }}
-                    >
-                      Germany
-                    </div>
-                    <div
-                      style={{
-                        fontSize: "18px",
-                        color: "#8c8c8c",
-                      }}
-                    >
-                      Last updated on{" "}
-                      {lastUpdate.toLocaleString([], {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </div>
-                  </div>
-                </Col>
-
-                <Col sm={25} md={3} lg={3} xl={5}>
-                  <div
-                    style={{
-                      color: "#0088FE",
-                      position: "absolute",
-                      width: "100px",
-                      textAlign: "right",
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: "18px",
-                      }}
-                    >
-                      Cases
-                    </div>
-                    <div
-                      style={{
-                        fontSize: "25px",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {totalCases}
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-              <Row
-                justify="center"
-                style={{ paddingTop: "40px", fontWeight: "bold" }}
-              >
-                Week Incidence
-              </Row>
-              <Row justify="end" style={{ paddingRight: "150px" }}>
-                <img
-                  src="https://api.corona-zahlen.org/map/states"
-                  style={{ width: "80%" }}
-                />
-              </Row>
-              <Row justify="start">
-                <HeatmapRange />
-              </Row>
-              <Row justify="center" style={{ paddingBottom: "50px" }}>
-                <StateSelection
-                  selectedTblState={state}
-                  onChange={onStateSelectionChange}
-                />
-              </Row>
-              <Row justify="center">
-                {stateCasesData && stateDeathsData && stateRecoveredData && (
-                  <StateChart
-                    cases={stateCasesData}
-                    deaths={stateDeathsData}
-                    recovered={stateRecoveredData}
-                    interval={chartInterval}
-                    days={selectedDays}
-                  />
-                )}
-              </Row>
+              />
+            </AutoComplete>
+          </Row>
+          <Row justify="center" style={{ paddingTop: "60px" }}>
+            <Col>
+              <LineChartLayout
+                LineChartData={lineChartCases}
+                DataKey="cases"
+                StrokeColor="#0088FE"
+                LegendTitle="Total Cases"
+                LegendColor="#0088FE"
+                BackgroundColor="#e6f7ff"
+              />
+            </Col>
+            <Col>
+              <LineChartLayout
+                LineChartData={lineChartRecovered}
+                DataKey="recovered"
+                StrokeColor="green"
+                LegendTitle="Total Recovered"
+                LegendColor="green"
+                BackgroundColor="#d9f7be"
+              />
+            </Col>
+            <Col>
+              <LineChartLayout
+                LineChartData={lineChartDeaths}
+                DataKey="deaths"
+                StrokeColor="red"
+                LegendTitle="Total Deaths"
+                LegendColor="red"
+                BackgroundColor="#fff1f0"
+              />
             </Col>
           </Row>
-        </Content>
-        <Footer
-          style={{
-            textAlign: "center",
-            background: "white",
-            paddingTop: "200px",
-            paddingBottom: "200px",
-          }}
-        >
+          <Row justify="space-around" style={{ paddingTop: "120px" }}>
+            <TimeFrameSelection onChange={onTimeChange} />
+          </Row>
+          <Row justify="center" style={{ paddingTop: "40px" }}>
+            <StateTable
+              selectedDays={selectedDays}
+              selectionState={state}
+              onChange={onStateTableChange}
+            />
+          </Row>
+        </Col>
+        <Col {...rightCol}>
+          <Row
+            justify="center"
+            style={{
+              background: "white",
+              paddingTop: "50px",
+            }}
+          >
+            <Col xs={20} sm={21} md={17} lg={13} xl={17}>
+              <div>
+                <div
+                  style={{
+                    height: "40px",
+                    width: "80px",
+                    background:
+                      "-webkit-linear-gradient(#000000 , #ff0000, #ffff00 )",
+                    color: "white",
+                    textAlign: "center",
+                    verticalAlign: "middle",
+                    lineHeight: "40px",
+                    fontWeight: "bold",
+                    fontSize: "large",
+                    position: "relative",
+                  }}
+                >
+                  Germany
+                </div>
+                <div
+                  style={{
+                    fontSize: "18px",
+                    color: "#8c8c8c",
+                  }}
+                >
+                  Last updated on{" "}
+                  {lastUpdate.toLocaleString([], {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </div>
+              </div>
+            </Col>
+
+            <Col xs={25} sm={26} md={3} lg={3} xl={30}>
+              <div
+                style={{
+                  color: "#0088FE",
+                  position: "absolute",
+                  width: "100px",
+                  textAlign: "right",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: "18px",
+                  }}
+                >
+                  Cases
+                </div>
+                <div
+                  style={{
+                    fontSize: "25px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {germanyTotalCases}
+                </div>
+              </div>
+            </Col>
+          </Row>
+          <Row
+            justify="center"
+            style={{ paddingTop: "40px", fontWeight: "bold", fontSize: "18px" }}
+          >
+            Week Incidence
+          </Row>
+          <Row justify="end" style={{ paddingRight: "150px" }}>
+            <img
+              src="https://api.corona-zahlen.org/map/states"
+              style={{ width: "80%" }}
+            />
+          </Row>
+          <Row justify="start">
+            <HeatmapRange />
+          </Row>
+          <Row justify="center" style={{ paddingBottom: "50px" }}>
+            <StateSelection
+              selectedTblState={state}
+              onChange={onStateSelectionChange}
+            />
+          </Row>
+          <Row justify="center">
+            {stateCases && stateDeaths && stateRecovered && (
+              <StateChart
+                cases={stateCases}
+                deaths={stateDeaths}
+                recovered={stateRecovered}
+                interval={chartInterval}
+                days={selectedDays}
+              />
+            )}
+          </Row>
+        </Col>
+      </Row>
+
+      <Row
+        justify="center"
+        style={{
+          paddingTop: "100px",
+          paddingBottom: "100px",
+          width: "100%",
+        }}
+      >
+        <Row justify="center" style={{ width: "100%" }}>
           <div className="link">
             <a
               style={{
@@ -376,41 +384,39 @@ const CountryComponent = () => {
                 fontSize: "25px",
                 fontWeight: "bold",
               }}
-              href="https://github.com/AAlagu"
+              href="https://github.com/AAlagu/corona-dashboard-germany"
               target="_blank"
             >
               CovidGermany
             </a>
           </div>
+        </Row>
+        <Row justify="center" style={{ width: "100%" }}>
           <div style={{ paddingTop: "30px" }}>
             <Space size="middle">
-              <a href="https://reactjs.org/" target="_blank">
-                <FaReact size="30px" color="#096dd9" />
+              <a
+                href="https://www.linkedin.com/in/alaguvelammal-alagusubbiah/"
+                target="_blank"
+              >
+                <FaLinkedinIn size="30px" color="#096dd9" />
               </a>
               <a href="https://github.com/AAlagu" target="_blank">
-                <GithubFilled style={{ fontSize: "35px" }} />
+                <FaGithub size="30px" color="black" />
               </a>
-              <a href="https://www.typescriptlang.org/" target="_blank">
-                <SiTypescript size="30px" color="#096dd9" />
+              <a
+                href="https://www.xing.com/profile/Alaguvelammal_Alagusubbiah"
+                target="_blank"
+              >
+                <FaXing size="30px" color="#00474f" />
               </a>
             </Space>
           </div>
-        </Footer>
-      </Layout>
-    </Layout>
+        </Row>
+      </Row>
+    </Row>
   );
 };
 
 //--------------------------------- Export ------------------------------------------
 
 export default CountryComponent;
-// {state && <StateChart state={state} />}
-//<StateTable selectedDays={days} />
-
-/*  <StateTable selectedDays={selectedDays} onStateChange={stateChange} />
-      <StateChart
-        cases={stateCasesData}
-        deaths={stateDeathsData}
-        recovered={stateRecoveredData}
-        interval={chartInterval}
-      />*/

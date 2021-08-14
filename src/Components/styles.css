@@ -1,0 +1,94 @@
+/*.stateTable thead > tr > th {
+  background-color: #8c8c8c;
+  color: #ffffff;
+}
+
+.stateTable thead > tr > th:hover {
+  color: black;
+}
+
+.stateTable tr:nth-child(2n) td {
+  background: #f0f0f0;
+}
+.stateTable td {
+  background: #d9d9d9;
+}
+.table-row-light{
+
+}
+.table-row-dark{
+
+}
+*/
+.heatMapLegend span {
+  border: 1px solid #ccc;
+  float: left;
+  width: 12px;
+  height: 14px;
+  margin: 2px;
+}
+.heatMapLegend {
+  list-style: none;
+}
+.heatMapLegend li {
+  float: left;
+  margin-right: 10px;
+}
+
+.ant-btn-primary {
+  background-color: #d9d9d9;
+  border-color: #d9d9d9;
+  color: black;
+}
+/*
+.stateTable tr:hover {
+  font-weight: bold;
+}
+
+.stateTable table-row-light {
+  background-color: #ffffff;
+}
+.stateTable table-row-dark {
+  background-color: #fbfbfb;
+}*/
+
+.ant-btn-primary:hover {
+  background: #f0f0f0;
+  border-color: #f0f0f0;
+  color: black;
+}
+
+.ant-btn-primary:focus {
+  background: #8c8c8c;
+  border-color: #8c8c8c;
+  color: white;
+}
+
+.spinLoading {
+  margin: 20px 0;
+  margin-bottom: 20px;
+  padding: 200px 50px;
+  text-align: center;
+  border-radius: 4px;
+}
+
+/*.cases {
+  background: #e6f7ff;
+}
+.cases:focus {
+  background: #e6f7ff;
+}
+
+.deaths {
+  background: #fff1f0;
+}
+.deaths:focus {
+  background: #fff1f0;
+}
+
+.recovered {
+  background: #d9f7be;
+}
+.recovered:focus {
+  background: #d9f7be;
+}*/

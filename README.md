@@ -1,46 +1,57 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<!-- TABLE OF CONTENTS -->
+<details open="open">
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Usage</a></li>
+  </ol>
+</details>
 
-## Available Scripts
+# About The Project
 
-In the project directory, you can run:
+In the midst of all covid19 apps and websites available, this project tries to visualize the recent Corona statistics about Germany.
+The data is queried from a public accessible REST API. 
+Following interactive elements are implemented:
 
-### `yarn start`
+* **Selection of a region:** These regions are Germany in total or a single county such as Baden-Wuerttemberg, Rheinland-Pfalz, etc.
+* **Time frame for the statistics:** 1,2,3,4 weeks back from now
+   * The statistics covers: total number of *cases*, total number of *deaths* and total number of *recovered*. Each for the selected period of time (e.g. 2 weeks back from now).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+The visualizations are done in such a way that change of control element changes all associated components used, for a better understanding of the underlying data.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+![corona-stats-germany_website screenshot](https://user-images.githubusercontent.com/46843674/129482101-ad7fd8b5-bc9b-495b-9036-e275cc5f7c97.png)
 
-### `yarn test`
+# Getting Started 
+To get a local copy up and running follow these steps.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Installation
 
-### `yarn build`
+1. Clone the repo     
+     ```sh
+     git clone https://github.com/AAlagu/corona-dashboard-germany.git 
+     ```      
+3. Install YARN packages
+      ```sh
+      yarn install 
+      ```
+      
+3. Runs the app in the development mode
+      ```sh 
+      yarn start 
+      ```
+    * Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# Usage
+On opening the site, the data for the Germany in total for the past 4 week time period is shown.
+The searchbar could be used to look up for a specific state. At the same time the required state can also be selected from the table.
+As data communicated from individual states to the respective health authorities are independent of one another and due to the delays over the weekend, the last updated time may vary And this is more pronounced over the weekend. 
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).

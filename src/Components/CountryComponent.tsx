@@ -67,12 +67,12 @@ const CountryComponent = () => {
     onSuccess: (germanyCases) => {
       setLineChartCases(germanyCases?.data);
       let total: number = germanyCases?.data
-        .map((a: any) => a.cases)
+        .map((a: any) => a?.cases)
         .reduce(function (a: number, b: number) {
           return a + b;
         });
       setGermanyTotalCases(total);
-      setLastUpdate(new Date(germanyCases?.meta.lastUpdate));
+      setLastUpdate(new Date(germanyCases?.meta?.lastUpdate));
     },
   });
 
@@ -295,7 +295,7 @@ const CountryComponent = () => {
                   }}
                 >
                   Last updated on{" "}
-                  {lastUpdate.toLocaleString([], {
+                  {lastUpdate?.toLocaleString([], {
                     year: "numeric",
                     month: "short",
                     day: "numeric",
@@ -361,7 +361,6 @@ const CountryComponent = () => {
                 deaths={stateDeaths}
                 recovered={stateRecovered}
                 interval={chartInterval}
-                days={selectedDays}
               />
             )}
           </Row>

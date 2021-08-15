@@ -36,21 +36,21 @@ const LineChartLayout: React.FC<props> = ({
     let total: number = 0;
 
     if (DataKey === "cases") {
-      total = LineChartData?.map((a: any) => a.cases).reduce(function (
+      total = LineChartData?.map((a: any) => a?.cases).reduce(function (
         a: number,
         b: number
       ) {
         return a + b;
       });
     } else if (DataKey === "recovered") {
-      total = LineChartData?.map((a: any) => a.recovered).reduce(function (
+      total = LineChartData?.map((a: any) => a?.recovered).reduce(function (
         a: number,
         b: number
       ) {
         return a + b;
       });
     } else if (DataKey === "deaths") {
-      total = LineChartData?.map((a: any) => a.deaths).reduce(function (
+      total = LineChartData?.map((a: any) => a?.deaths).reduce(function (
         a: number,
         b: number
       ) {

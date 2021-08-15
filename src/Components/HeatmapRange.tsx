@@ -12,15 +12,15 @@ const HeatmapRange = () => {
 
   return (
     <ul className="heatMapLegend">
-      {statesMap?.incidentRanges.map((item: any, index: number) =>
-        item.max ? (
+      {statesMap?.incidentRanges?.map((item: any, index: number) =>
+        item?.max ? (
           <li key={index}>
-            <span style={{ backgroundColor: item.color }} />
-            {item.min} - {item.max}
+            <span style={{ backgroundColor: item?.color }} />
+            {item?.min} - {item?.max}
           </li>
         ) : (
           <li key={index}>
-            <span style={{ backgroundColor: item.color }} />≥{item.min}
+            <span style={{ backgroundColor: item?.color }} />≥{item?.min}
           </li>
         )
       )}

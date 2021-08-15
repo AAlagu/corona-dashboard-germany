@@ -23,13 +23,13 @@ const legendLayout = {
   verticalAlign: "top",
   align: "left",
 };
+
 //------------------------------------- interface -------------------------------------
 interface props {
   cases: any;
   deaths: any;
   recovered: any;
   interval: number;
-  days: number;
 }
 
 interface ILegend {
@@ -44,7 +44,6 @@ const StateChart: React.FC<props> = ({
   deaths,
   recovered,
   interval,
-  days,
 }) => {
   //Chart properties
   const barChartWidth: number = 500;
@@ -60,7 +59,8 @@ const StateChart: React.FC<props> = ({
   const recoveredBarColor: string = "#95de64";
   const deathsBarColor: string = "#ff7875";
 
-  const yesterdayIndex: number = days - 1;
+  const yesterdayIndex: number = cases.length - 1; //To show previous data
+
   const [activeBarDate, setActiveBarDate] = useState<Date>(new Date());
 
   const formatDate = (inputString: any): any => {
@@ -122,9 +122,9 @@ const StateChart: React.FC<props> = ({
   };
 
   const barMouseMoveEvent = (event: any) => {
-    let date = new Date(event.date);
+    let date = new Date(event?.date);
     setActiveBarDate(date);
-    let dateFormat = formatDate(event.date);
+    let dateFormat = formatDate(event?.date);
 
     let casesCount: number = 0;
     let deathsCount: number = 0;
@@ -134,32 +134,32 @@ const StateChart: React.FC<props> = ({
     let prevRecovered: number = 0;
 
     cases?.map((a: any) => {
-      let d2 = new Date(a.date);
+      let d2 = new Date(a?.date);
       if (date.getTime() === d2.getTime()) {
-        casesCount = a.cases;
+        casesCount = a?.cases;
       }
       if (date.getTime() - 24 * 60 * 60 * 1000 === d2.getTime()) {
-        prevCases = a.cases;
+        prevCases = a?.cases;
       }
     });
 
     deaths?.map((a: any) => {
-      let d2 = new Date(a.date);
+      let d2 = new Date(a?.date);
       if (date.getTime() === d2.getTime()) {
-        deathsCount = a.deaths;
+        deathsCount = a?.deaths;
       }
       if (date.getTime() - 24 * 60 * 60 * 1000 === d2.getTime()) {
-        prevDeaths = a.deaths;
+        prevDeaths = a?.deaths;
       }
     });
 
     recovered?.map((a: any) => {
-      let d2 = new Date(a.date);
+      let d2 = new Date(a?.date);
       if (date.getTime() === d2.getTime()) {
-        recoveredCount = a.recovered;
+        recoveredCount = a?.recovered;
       }
       if (date.getTime() - 24 * 60 * 60 * 1000 === d2.getTime()) {
-        prevRecovered = a.recovered;
+        prevRecovered = a?.recovered;
       }
     });
 
@@ -270,11 +270,11 @@ const StateChart: React.FC<props> = ({
                 <Cell
                   cursor="pointer"
                   fill={
-                    new Date(item.date).getTime() === activeBarDate.getTime()
+                    new Date(item?.date).getTime() === activeBarDate.getTime()
                       ? "#0088FE"
                       : casesBarColor
                   }
-                  key={`cell-${item.date}`}
+                  key={`cell-${item?.date}`}
                 />
               ))}
             </Bar>
@@ -316,11 +316,11 @@ const StateChart: React.FC<props> = ({
                 <Cell
                   cursor="pointer"
                   fill={
-                    new Date(item.date).getTime() === activeBarDate.getTime()
+                    new Date(item?.date).getTime() === activeBarDate.getTime()
                       ? "green"
                       : recoveredBarColor
                   }
-                  key={`cell-${item.date}`}
+                  key={`cell-${item?.date}`}
                 />
               ))}
             </Bar>
@@ -362,11 +362,11 @@ const StateChart: React.FC<props> = ({
                 <Cell
                   cursor="pointer"
                   fill={
-                    new Date(item.date).getTime() === activeBarDate.getTime()
+                    new Date(item?.date).getTime() === activeBarDate.getTime()
                       ? "red"
                       : deathsBarColor
                   }
-                  key={`cell-${item.date}`}
+                  key={`cell-${item?.date}`}
                 />
               ))}
             </Bar>

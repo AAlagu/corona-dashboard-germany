@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import * as api from "../CovidApi";
 import "./styles.css";
-import { Result, Spin } from "antd";
+import { Result, Spin, Tooltip } from "antd";
+import { InfoCircleOutlined } from "@ant-design/icons";
 
 //------------------------------------- interface -------------------------------------
 interface IStateColumn {
@@ -13,6 +14,7 @@ interface IStateColumn {
   cases: number;
   deaths: number;
   recovered: number;
+  receivedNoOfDays: number;
 }
 
 //props
@@ -38,6 +40,11 @@ const tableStyle = {
   cursor: "pointer",
 };
 
+const infoStyle = {
+  color: "#0088FE",
+  fontSize: "small",
+} as React.CSSProperties;
+
 //--------------------------------- Component ------------------------------------------
 const StateTable: React.FC<props> = ({
   selectedDays,
@@ -53,34 +60,128 @@ const StateTable: React.FC<props> = ({
       cases: 0,
       deaths: 0,
       recovered: 0,
+      receivedNoOfDays: 0,
     },
-    { key: "HH", name: "Hamburg", cases: 0, deaths: 0, recovered: 0 },
-    { key: "NI", name: "Niedersachsen", cases: 0, deaths: 0, recovered: 0 },
-    { key: "HB", name: "Bremen", cases: 0, deaths: 0, recovered: 0 },
+    {
+      key: "HH",
+      name: "Hamburg",
+      cases: 0,
+      deaths: 0,
+      recovered: 0,
+      receivedNoOfDays: 0,
+    },
+    {
+      key: "NI",
+      name: "Niedersachsen",
+      cases: 0,
+      deaths: 0,
+      recovered: 0,
+      receivedNoOfDays: 0,
+    },
+    {
+      key: "HB",
+      name: "Bremen",
+      cases: 0,
+      deaths: 0,
+      recovered: 0,
+      receivedNoOfDays: 0,
+    },
     {
       key: "NW",
       name: "Nordrhein-Westfalen",
       cases: 0,
       deaths: 0,
       recovered: 0,
+      receivedNoOfDays: 0,
     },
-    { key: "HE", name: "Hessen", cases: 0, deaths: 0, recovered: 0 },
-    { key: "RP", name: "Rheinland-Pfalz", cases: 0, deaths: 0, recovered: 0 },
-    { key: "BW", name: "Baden-Württemberg", cases: 0, deaths: 0, recovered: 0 },
-    { key: "BY", name: "Bayern", cases: 0, deaths: 0, recovered: 0 },
-    { key: "SL", name: "Saarland", cases: 0, deaths: 0, recovered: 0 },
-    { key: "BE", name: "Berlin", cases: 0, deaths: 0, recovered: 0 },
-    { key: "BB", name: "Brandenburg", cases: 0, deaths: 0, recovered: 0 },
+    {
+      key: "HE",
+      name: "Hessen",
+      cases: 0,
+      deaths: 0,
+      recovered: 0,
+      receivedNoOfDays: 0,
+    },
+    {
+      key: "RP",
+      name: "Rheinland-Pfalz",
+      cases: 0,
+      deaths: 0,
+      recovered: 0,
+      receivedNoOfDays: 0,
+    },
+    {
+      key: "BW",
+      name: "Baden-Württemberg",
+      cases: 0,
+      deaths: 0,
+      recovered: 0,
+      receivedNoOfDays: 0,
+    },
+    {
+      key: "BY",
+      name: "Bayern",
+      cases: 0,
+      deaths: 0,
+      recovered: 0,
+      receivedNoOfDays: 0,
+    },
+    {
+      key: "SL",
+      name: "Saarland",
+      cases: 0,
+      deaths: 0,
+      recovered: 0,
+      receivedNoOfDays: 0,
+    },
+    {
+      key: "BE",
+      name: "Berlin",
+      cases: 0,
+      deaths: 0,
+      recovered: 0,
+      receivedNoOfDays: 0,
+    },
+    {
+      key: "BB",
+      name: "Brandenburg",
+      cases: 0,
+      deaths: 0,
+      recovered: 0,
+      receivedNoOfDays: 0,
+    },
     {
       key: "MV",
       name: "Mecklenburg-Vorpommern",
       cases: 0,
       deaths: 0,
       recovered: 0,
+      receivedNoOfDays: 0,
     },
-    { key: "SN", name: "Sachsen", cases: 0, deaths: 0, recovered: 0 },
-    { key: "ST", name: "Sachsen-Anhalt", cases: 0, deaths: 0, recovered: 0 },
-    { key: "TH", name: "Thüringen", cases: 0, deaths: 0, recovered: 0 },
+    {
+      key: "SN",
+      name: "Sachsen",
+      cases: 0,
+      deaths: 0,
+      recovered: 0,
+      receivedNoOfDays: 0,
+    },
+    {
+      key: "ST",
+      name: "Sachsen-Anhalt",
+      cases: 0,
+      deaths: 0,
+      recovered: 0,
+      receivedNoOfDays: 0,
+    },
+    {
+      key: "TH",
+      name: "Thüringen",
+      cases: 0,
+      deaths: 0,
+      recovered: 0,
+      receivedNoOfDays: 0,
+    },
   ]);
 
   const {
@@ -103,7 +204,11 @@ const StateTable: React.FC<props> = ({
     api.getAllStatesRecovered(totalDays)
   );
 
-  const totalCases = (statekey: string, casesHistory: any) => {
+  const totalCases = (
+    statekey: string,
+    casesHistory: any,
+    noOfCases: number
+  ) => {
     let totalCases: number = casesHistory
       ?.map((a: any) => a?.cases)
       .reduce(function (a: number, b: number) {
@@ -113,6 +218,7 @@ const StateTable: React.FC<props> = ({
     const updated = stateData?.map((data) => {
       if (data.key === statekey) {
         data.cases = totalCases;
+        data.receivedNoOfDays = noOfCases;
         return data;
       } else {
         return data;
@@ -122,7 +228,11 @@ const StateTable: React.FC<props> = ({
     setStateData(updated);
   };
 
-  const totalDeaths = (statekey: string, deathsHistory: any) => {
+  const totalDeaths = (
+    statekey: string,
+    deathsHistory: any,
+    noOfDeaths: number
+  ) => {
     let totalDeaths: number = deathsHistory
       ?.map((a: any) => a?.deaths)
       .reduce(function (a: number, b: number) {
@@ -132,6 +242,7 @@ const StateTable: React.FC<props> = ({
     const updated = stateData?.map((data) => {
       if (data.key === statekey) {
         data.deaths = totalDeaths;
+        data.receivedNoOfDays = noOfDeaths;
         return data;
       } else {
         return data;
@@ -141,7 +252,11 @@ const StateTable: React.FC<props> = ({
     setStateData(updated);
   };
 
-  const totalRecovered = (statekey: string, recoveredHistory: any) => {
+  const totalRecovered = (
+    statekey: string,
+    recoveredHistory: any,
+    noOfRecovered: number
+  ) => {
     let totalRecovered: number = recoveredHistory
       ?.map((a: any) => a?.recovered)
       .reduce(function (a: number, b: number) {
@@ -151,6 +266,7 @@ const StateTable: React.FC<props> = ({
     const updated = stateData?.map((data) => {
       if (data.key === statekey) {
         data.recovered = totalRecovered;
+        data.receivedNoOfDays = noOfRecovered;
         return data;
       } else {
         return data;
@@ -160,36 +276,38 @@ const StateTable: React.FC<props> = ({
     setStateData(updated);
   };
 
-  //Filter the data depends on selected timeframe
-  const selectedData = () => {
-    stateData?.map((stateData) => {
-      let cases: any = [];
-      let deaths: any = [];
-      let recovered: any = [];
-
-      for (let i = totalDays - selectedDays; i < totalDays; i++) {
-        cases.push(statesCases?.data[stateData.key].history[i]);
-        deaths.push(statesDeaths?.data[stateData.key].history[i]);
-        recovered.push(statesRecovered?.data[stateData.key].history[i]);
-      }
-
-      totalCases(stateData.key, cases);
-      totalDeaths(stateData.key, deaths);
-      totalRecovered(stateData.key, recovered);
-    });
-  };
-
-  //Filter the data depends on selected state
-  const selectedRow = (state: string) => {
+  const selectedDaysHistory = (stateId: string): [any, any, any] => {
     let cases: any = [];
     let deaths: any = [];
     let recovered: any = [];
 
     for (let i = totalDays - selectedDays; i < totalDays; i++) {
-      cases.push(statesCases?.data[state].history[i]);
-      deaths.push(statesDeaths?.data[state].history[i]);
-      recovered.push(statesRecovered?.data[state].history[i]);
+      let casesHistory = statesCases?.data[stateId]?.history[i];
+      let deathsHistory = statesDeaths?.data[stateId]?.history[i];
+      let recoveredHistory = statesRecovered?.data[stateId]?.history[i];
+      if (casesHistory && deathsHistory && recoveredHistory) {
+        cases.push(casesHistory);
+        deaths.push(deathsHistory);
+        recovered.push(recoveredHistory);
+      }
     }
+    return [cases, deaths, recovered];
+  };
+
+  //Filter the data depends on selected timeframe
+  const selectedData = () => {
+    stateData?.map((stateData) => {
+      const [cases, deaths, recovered] = selectedDaysHistory(stateData.key);
+
+      totalCases(stateData.key, cases, cases.length);
+      totalDeaths(stateData.key, deaths, deaths.length);
+      totalRecovered(stateData.key, recovered, recovered.length);
+    });
+  };
+
+  //Filter the data depends on selected state
+  const selectedRow = (state: string) => {
+    const [cases, deaths, recovered] = selectedDaysHistory(state);
 
     onChange(state, cases, deaths, recovered);
   };
@@ -214,10 +332,36 @@ const StateTable: React.FC<props> = ({
       key: "name",
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
       render: (at: any, row: any) => {
+        let info: string =
+          "Last " +
+          (selectedDays - row.receivedNoOfDays) +
+          " day/s is not yet available";
         return row.key === selectionState ? (
-          <div style={highlightStyle}>{row.name}</div>
+          <div style={highlightStyle}>
+            {row.name}{" "}
+            {row.receivedNoOfDays !== selectedDays ? (
+              <>
+                <Tooltip title={info}>
+                  <InfoCircleOutlined style={infoStyle} />
+                </Tooltip>
+              </>
+            ) : (
+              <></>
+            )}
+          </div>
         ) : (
-          <div>{row.name} </div>
+          <div>
+            {row.name}{" "}
+            {row.receivedNoOfDays !== selectedDays ? (
+              <>
+                <Tooltip title={info}>
+                  <InfoCircleOutlined style={infoStyle} />
+                </Tooltip>
+              </>
+            ) : (
+              <></>
+            )}
+          </div>
         );
       },
     },

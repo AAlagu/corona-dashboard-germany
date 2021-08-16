@@ -20,7 +20,7 @@
 # About The Project
 
 In the midst of all covid19 apps and websites available, this project tries to visualize the recent Corona statistics about Germany.
-The data is queried from a public accessible REST API. [https://api.corona-zahlen.org]
+The data is queried from a public accessible REST API.
 Following interactive elements are implemented:
 
 * **Selection of a region:** These regions are Germany in total or a single county such as Baden-Wuerttemberg, Rheinland-Pfalz, etc.

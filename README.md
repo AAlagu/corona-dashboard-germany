@@ -13,13 +13,14 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
+    <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ol>
 </details>
 
 # About The Project
 
 In the midst of all covid19 apps and websites available, this project tries to visualize the recent Corona statistics about Germany.
-The data is queried from a public accessible REST API. 
+The data is queried from a public accessible REST API.
 Following interactive elements are implemented:
 
 * **Selection of a region:** These regions are Germany in total or a single county such as Baden-Wuerttemberg, Rheinland-Pfalz, etc.
@@ -55,3 +56,8 @@ On opening the site, the data for the Germany in total for the past 4 week time 
 The searchbar could be used to look up for a specific state. At the same time the required state can also be selected from the table.
 As data communicated from individual states to the respective health authorities are independent of one another and due to the delays over the weekend, the last updated time may vary And this is more pronounced over the weekend. 
 
+# Acknowledgements
+  * [Rest API](https://api.corona-zahlen.org)
+  * [React Query](https://react-query.tanstack.com/)
+  * [Recharts](https://recharts.org/)
+  * [Ant Design](https://ant.design/)

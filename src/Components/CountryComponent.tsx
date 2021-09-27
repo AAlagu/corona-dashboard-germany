@@ -49,6 +49,7 @@ const CountryComponent = () => {
   const [stateCases, setStateCases] = useState<any>();
   const [stateDeaths, setStateDeaths] = useState<any>();
   const [stateRecovered, setStateRecovered] = useState<any>();
+  const [state_LastFourWkCases, setState_LastFourWkCases] = useState<any>();
 
   const [chartInterval, setChartInterval] = useState<number>(7);
 
@@ -124,12 +125,14 @@ const CountryComponent = () => {
     state: string,
     cases: any,
     deaths: any,
-    recovered: any
+    recovered: any,
+    lastFourWkCases: any
   ) => {
     setState(state);
     setStateCases(cases);
     setStateDeaths(deaths);
     setStateRecovered(recovered);
+    setState_LastFourWkCases(lastFourWkCases);
   };
 
   useEffect(() => {
@@ -360,6 +363,7 @@ const CountryComponent = () => {
                 cases={stateCases}
                 deaths={stateDeaths}
                 recovered={stateRecovered}
+                lastFourWkCases={state_LastFourWkCases}
                 interval={chartInterval}
               />
             )}

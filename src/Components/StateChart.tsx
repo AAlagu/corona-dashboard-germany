@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Row } from "antd";
-import { Bar, BarChart, Cell, Legend, XAxis, YAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  Cell,
+  Legend,
+  ReferenceArea,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 //------------------------------------- style -------------------------------------
 const legendCountStyle = {
@@ -29,6 +39,7 @@ interface props {
   cases: any;
   deaths: any;
   recovered: any;
+  lastFourWkCases: any;
   interval: number;
 }
 
@@ -43,6 +54,7 @@ const StateChart: React.FC<props> = ({
   cases,
   deaths,
   recovered,
+  lastFourWkCases,
   interval,
 }) => {
   //Chart properties
@@ -201,6 +213,14 @@ const StateChart: React.FC<props> = ({
     );
   };
 
+  const renderConfirmedLegend = () => {
+    return (
+      <div style={{ color: "#0088FE" }}>
+        <div style={legendTextStyle}>Confirmed</div>
+      </div>
+    );
+  };
+
   const renderDeathsLegend = () => {
     return (
       <div style={{ color: "red" }}>
@@ -281,7 +301,7 @@ const StateChart: React.FC<props> = ({
           </BarChart>
         </div>
       </Row>
-      <Row style={{ paddingTop: "50px" }}>
+      <Row style={{ paddingTop: "10px" }}>
         <div style={{ background: "#d9f7be" }}>
           <BarChart
             width={barChartWidth}
@@ -327,7 +347,7 @@ const StateChart: React.FC<props> = ({
           </BarChart>
         </div>
       </Row>
-      <Row style={{ paddingTop: "50px" }}>
+      <Row style={{ paddingTop: "10px" }}>
         <div style={{ background: "#ffccc7" }}>
           <BarChart
             width={barChartWidth}
@@ -372,6 +392,35 @@ const StateChart: React.FC<props> = ({
             </Bar>
           </BarChart>
         </div>
+      </Row>
+      <Row style={{ paddingTop: "10px" }}>
+        <AreaChart
+          width={450}
+          height={100}
+          data={lastFourWkCases}
+          margin={{ top: 5, left: 20, right: -20, bottom: 5 }}
+          style={{ background: "#f0f0f0" }}
+        >
+          <XAxis
+            dataKey={xAxisDatakey}
+            tickFormatter={formatDate}
+            interval={7}
+            stroke={casesBarColor}
+          />
+          <YAxis dataKey="cases" orientation="right" stroke={casesBarColor} />
+          <Legend
+            verticalAlign="top"
+            align="left"
+            content={renderConfirmedLegend}
+          />
+          <Area type="monotone" dataKey="cases" fill={casesBarColor} />
+          <ReferenceArea
+            x1={cases[0].date}
+            x2={cases[cases.length - 1].date}
+            fill="#8c8c8c"
+            strokeOpacity={0.3}
+          />
+        </AreaChart>
       </Row>
     </>
   );

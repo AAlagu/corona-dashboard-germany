@@ -25,7 +25,8 @@ interface props {
     selectedTblState: string,
     cases: any,
     deaths: any,
-    recovered: any
+    recovered: any,
+    lastFourWkCases: any
   ) => void;
 }
 
@@ -276,10 +277,11 @@ const StateTable: React.FC<props> = ({
     setStateData(updated);
   };
 
-  const selectedDaysHistory = (stateId: string): [any, any, any] => {
+  const selectedDaysHistory = (stateId: string): [any, any, any, any] => {
     let cases: any = [];
     let deaths: any = [];
     let recovered: any = [];
+    let lastFourWkCases: any = [];
 
     for (let i = totalDays - selectedDays; i < totalDays; i++) {
       let casesHistory = statesCases?.data[stateId]?.history[i];
@@ -291,7 +293,15 @@ const StateTable: React.FC<props> = ({
         recovered.push(recoveredHistory);
       }
     }
-    return [cases, deaths, recovered];
+
+    //Last 4 weeks
+    for (let i = 0; i < totalDays; i++) {
+      let casesHistory = statesCases?.data[stateId]?.history[i];
+      if (casesHistory) {
+        lastFourWkCases.push(casesHistory);
+      }
+    }
+    return [cases, deaths, recovered, lastFourWkCases];
   };
 
   //Filter the data depends on selected timeframe
@@ -307,9 +317,10 @@ const StateTable: React.FC<props> = ({
 
   //Filter the data depends on selected state
   const selectedRow = (state: string) => {
-    const [cases, deaths, recovered] = selectedDaysHistory(state);
+    const [cases, deaths, recovered, lastFourWkCases] =
+      selectedDaysHistory(state);
 
-    onChange(state, cases, deaths, recovered);
+    onChange(state, cases, deaths, recovered, lastFourWkCases);
   };
 
   useEffect(() => {
